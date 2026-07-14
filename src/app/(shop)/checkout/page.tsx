@@ -25,8 +25,8 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold">Checkout</h1>
-        <p className="text-sm text-black/60 dark:text-white/60">Your cart is empty.</p>
+        <h1 className="font-heading text-2xl font-semibold">Checkout</h1>
+        <p className="text-sm text-muted-foreground">Your cart is empty.</p>
       </div>
     );
   }
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
       key: data.keyId,
       amount: data.amount,
       currency: data.currency,
-      name: "Acme Store",
+      name: "KBD Store",
       description: "Order payment",
       order_id: data.razorpayOrderId,
       prefill: { name, email, contact: phone },
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
       modal: {
         ondismiss: () => setLoading(false),
       },
-      theme: { color: "#111111" },
+      theme: { color: "#7c3aed" },
     });
 
     razorpay.open();
@@ -98,52 +98,60 @@ export default function CheckoutPage() {
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" onLoad={() => setScriptReady(true)} />
       <div className="flex max-w-md flex-col gap-6">
-        <h1 className="text-2xl font-semibold">Checkout</h1>
+        <h1 className="font-heading text-2xl font-semibold">Checkout</h1>
 
-        <div className="rounded-md border border-black/10 px-4 py-3 text-sm dark:border-white/15">
-          <div className="flex justify-between font-medium">
+        <div className="glass flex flex-col gap-2 rounded-2xl p-4">
+          {items.map((item) => (
+            <div key={item.productId} className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                {item.name} × {item.quantity}
+              </span>
+              <span>
+                ₹{((item.priceInPaise * item.quantity) / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+          ))}
+          <div className="mt-1 flex justify-between border-t border-border pt-2 font-heading font-semibold">
             <span>Total</span>
             <span>₹{(totalInPaise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
           </div>
         </div>
 
-        {error && (
-          <p className="rounded-md bg-red-600/10 px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</p>
-        )}
+        {error && <p className="rounded-lg bg-destructive-muted px-3 py-2 text-sm text-destructive-strong">{error}</p>}
 
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1 text-sm">
+        <form onSubmit={onSubmit} className="glass flex flex-col gap-4 rounded-2xl p-6">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Full name
             <input
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className="rounded-lg border border-input bg-background px-3 py-2 text-sm font-normal transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Email
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className="rounded-lg border border-input bg-background px-3 py-2 text-sm font-normal transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Phone
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="9999999999"
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className="rounded-lg border border-input bg-background px-3 py-2 text-sm font-normal transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </label>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-black"
+            className="mt-1 cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Processing..." : "Pay now"}
           </button>

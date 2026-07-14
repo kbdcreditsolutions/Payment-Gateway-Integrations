@@ -33,35 +33,47 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex w-full max-w-sm flex-col gap-4">
-      <h1 className="text-xl font-semibold">Admin login</h1>
+    <form onSubmit={onSubmit} className="glass flex w-full max-w-sm flex-col gap-5 rounded-3xl p-8">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <span className="flex size-11 items-center justify-center rounded-xl bg-primary font-heading text-lg font-bold text-primary-foreground">
+          K
+        </span>
+        <div>
+          <h1 className="font-heading text-xl font-semibold">Admin login</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Sign in to manage your Razorpay integration</p>
+        </div>
+      </div>
+
       {error && (
-        <p className="rounded-md bg-red-600/10 px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</p>
+        <p className="rounded-lg bg-destructive-muted px-3 py-2 text-sm text-destructive-strong" role="alert">
+          {error}
+        </p>
       )}
-      <label className="flex flex-col gap-1 text-sm">
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Email
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+          className="rounded-lg border border-input bg-background px-3 py-2 text-sm font-normal text-foreground transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </label>
-      <label className="flex flex-col gap-1 text-sm">
+      <label className="flex flex-col gap-1.5 text-sm font-medium">
         Password
         <input
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+          className="rounded-lg border border-input bg-background px-3 py-2 text-sm font-normal text-foreground transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </label>
       <button
         type="submit"
         disabled={loading}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-black"
+        className="mt-1 cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {loading ? "Signing in..." : "Sign in"}
       </button>

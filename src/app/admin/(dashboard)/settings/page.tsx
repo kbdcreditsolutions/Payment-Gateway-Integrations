@@ -10,6 +10,9 @@ type ConfigView = {
   updatedAt: string;
 } | null;
 
+const inputClass =
+  "rounded-lg border border-input bg-background px-3 py-2 font-mono text-sm text-foreground transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring";
+
 export default function GatewaySettingsPage() {
   const [config, setConfig] = useState<ConfigView>(null);
   const [loading, setLoading] = useState(true);
@@ -86,88 +89,123 @@ export default function GatewaySettingsPage() {
       return;
     }
 
-    setConfig(data.config ? { ...data.config, updatedAt: data.config.updatedAt } : data.config);
+    setConfig(data.config ?? null);
     setKeySecret("");
     setWebhookSecret("");
     setMessage({ type: "success", text: "Gateway configuration saved." });
   }
 
   if (loading) {
-    return <p className="text-sm text-black/60 dark:text-white/60">Loading...</p>;
+    return <p className="text-sm text-muted-foreground">Loading...</p>;
   }
 
   return (
     <div className="flex max-w-lg flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Gateway Settings</h1>
-        <p className="mt-1 text-sm text-black/60 dark:text-white/60">
+        <h1 className="font-heading text-2xl font-semibold">Gateway Settings</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Configure the Razorpay key_id and key_secret used for checkout, payment links, and webhooks.
           The secret is encrypted before it&apos;s stored.
         </p>
       </div>
 
       {config && (
-        <div className="rounded-md border border-black/10 px-4 py-3 text-sm dark:border-white/15">
-          <div>Current key_id: <code>{config.keyId}</code></div>
-          <div>Current key_secret: <code>{config.keySecretMasked}</code></div>
-          <div>Webhook secret set: {config.hasWebhookSecret ? "yes" : "no"}</div>
-          <div>Status: {config.enabled ? "enabled" : "disabled"}</div>
-        </div>
+        <dl className="glass grid grid-cols-2 gap-4 rounded-2xl p-4 text-sm sm:grid-cols-4">
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">key_id</dt>
+            <dd className="mt-1 truncate font-mono text-sm">{config.keyId}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">key_secret</dt>
+            <dd className="mt-1 font-mono text-sm">{config.keySecretMasked}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Webhook secret</dt>
+            <dd className="mt-1 text-sm">{config.hasWebhookSecret ? "Set" : "Not set"}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Status</dt>
+            <dd className="mt-1 flex items-center gap-1.5 text-sm">
+              <span className={`size-1.5 rounded-full ${config.enabled ? "bg-success" : "bg-muted-foreground"}`} />
+              {config.enabled ? "Enabled" : "Disabled"}
+            </dd>
+          </div>
+        </dl>
       )}
 
       {message && (
         <p
-          className={`rounded-md px-3 py-2 text-sm ${
+          role="status"
+          className={`rounded-lg px-3 py-2 text-sm ${
             message.type === "error"
-              ? "bg-red-600/10 text-red-700 dark:text-red-400"
-              : "bg-green-600/10 text-green-700 dark:text-green-400"
+              ? "bg-destructive-muted text-destructive-strong"
+              : "bg-success-muted text-success-strong"
           }`}
         >
           {message.text}
         </p>
       )}
 
-      <form onSubmit={onSave} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
+      <form onSubmit={onSave} className="glass flex flex-col gap-4 rounded-2xl p-6">
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
           key_id
           <input
             value={keyId}
             onChange={(e) => setKeyId(e.target.value)}
             required
             placeholder="rzp_test_xxxxxxxxxxxx"
-            className="rounded-md border border-black/15 bg-transparent px-3 py-2 font-mono text-sm dark:border-white/20"
+            className={inputClass}
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          key_secret {config && <span className="text-black/50 dark:text-white/50">(leave blank to keep current)</span>}
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
+          key_secret{" "}
+          {config && <span className="font-normal text-muted-foreground">(leave blank to keep current)</span>}
           <input
             type="password"
             value={keySecret}
             onChange={(e) => setKeySecret(e.target.value)}
             placeholder={config ? "••••••••••••" : "required for first setup"}
-            className="rounded-md border border-black/15 bg-transparent px-3 py-2 font-mono text-sm dark:border-white/20"
+            className={inputClass}
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          webhook secret <span className="text-black/50 dark:text-white/50">(optional — set this in Razorpay dashboard webhooks)</span>
+        <label className="flex flex-col gap-1.5 text-sm font-medium">
+          webhook secret{" "}
+          <span className="font-normal text-muted-foreground">
+            (optional — set this in Razorpay dashboard webhooks)
+          </span>
           <input
             type="password"
             value={webhookSecret}
             onChange={(e) => setWebhookSecret(e.target.value)}
             placeholder={config?.hasWebhookSecret ? "•••••••••••• (already set)" : "optional"}
-            className="rounded-md border border-black/15 bg-transparent px-3 py-2 font-mono text-sm dark:border-white/20"
+            className={inputClass}
           />
         </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
-          Enable Razorpay payments
+
+        <label className="flex cursor-pointer items-center justify-between rounded-lg border border-border px-3 py-2.5">
+          <span className="text-sm font-medium">Enable Razorpay payments</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={enabled}
+            onClick={() => setEnabled((v) => !v)}
+            className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-150 ${
+              enabled ? "bg-primary" : "bg-muted-foreground/30"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-transform duration-150 ${
+                enabled ? "translate-x-[22px]" : "translate-x-0.5"
+              }`}
+            />
+          </button>
         </label>
 
-        <div className="flex gap-3">
+        <div className="mt-1 flex gap-3">
           <button
             type="submit"
             disabled={saving}
-            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-black"
+            className="cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save"}
           </button>
@@ -175,7 +213,7 @@ export default function GatewaySettingsPage() {
             type="button"
             onClick={onTest}
             disabled={testing}
-            className="rounded-md border border-black/15 px-4 py-2 text-sm font-medium disabled:opacity-50 dark:border-white/20"
+            className="cursor-pointer rounded-lg border border-border px-4 py-2.5 text-sm font-medium transition-colors duration-150 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
           >
             {testing ? "Testing..." : "Test connection"}
           </button>

@@ -15,11 +15,14 @@ type Link = {
 };
 
 const STATUS_STYLES: Record<Link["status"], string> = {
-  CREATED: "bg-amber-600/10 text-amber-800 dark:text-amber-300",
-  PAID: "bg-green-600/10 text-green-800 dark:text-green-300",
-  CANCELLED: "bg-black/10 text-black/60 dark:bg-white/10 dark:text-white/60",
-  EXPIRED: "bg-red-600/10 text-red-800 dark:text-red-300",
+  CREATED: "bg-warning-muted text-warning-strong",
+  PAID: "bg-success-muted text-success-strong",
+  CANCELLED: "bg-muted text-muted-foreground",
+  EXPIRED: "bg-destructive-muted text-destructive-strong",
 };
+
+const inputClass =
+  "rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-ring";
 
 export default function PaymentLinksPage() {
   const [links, setLinks] = useState<Link[]>([]);
@@ -83,16 +86,16 @@ export default function PaymentLinksPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold">Payment Links</h1>
-        <p className="mt-1 text-sm text-black/60 dark:text-white/60">
+        <h1 className="font-heading text-2xl font-semibold">Payment Links</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Generate a Razorpay payment link to share with a customer directly.
         </p>
       </div>
 
-      <form onSubmit={onCreate} className="flex max-w-lg flex-col gap-4 rounded-lg border border-black/10 p-4 dark:border-white/15">
-        {error && <p className="rounded-md bg-red-600/10 px-3 py-2 text-sm text-red-700 dark:text-red-400">{error}</p>}
+      <form onSubmit={onCreate} className="glass flex max-w-lg flex-col gap-4 rounded-2xl p-6">
+        {error && <p className="rounded-lg bg-destructive-muted px-3 py-2 text-sm text-destructive-strong">{error}</p>}
         <div className="grid grid-cols-2 gap-4">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Amount (INR)
             <input
               type="number"
@@ -101,98 +104,99 @@ export default function PaymentLinksPage() {
               required
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className={inputClass}
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Description
             <input
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Invoice #123"
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className={inputClass}
             />
           </label>
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Customer name
-            <input
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
-            />
+            <input value={customerName} onChange={(e) => setCustomerName(e.target.value)} className={inputClass} />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Email
             <input
               type="email"
               value={customerEmail}
               onChange={(e) => setCustomerEmail(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className={inputClass}
             />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium">
             Phone
             <input
               value={customerContact}
               onChange={(e) => setCustomerContact(e.target.value)}
-              className="rounded-md border border-black/15 bg-transparent px-3 py-2 dark:border-white/20"
+              className={inputClass}
             />
           </label>
         </div>
         <button
           type="submit"
           disabled={creating}
-          className="w-fit rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-black"
+          className="w-fit cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {creating ? "Generating..." : "Generate link"}
         </button>
       </form>
 
       <div>
-        <h2 className="mb-3 text-lg font-medium">Recent links</h2>
+        <h2 className="mb-3 font-heading text-lg font-medium">Recent links</h2>
         {loading ? (
-          <p className="text-sm text-black/60 dark:text-white/60">Loading...</p>
+          <p className="text-sm text-muted-foreground">Loading...</p>
         ) : links.length === 0 ? (
-          <p className="text-sm text-black/60 dark:text-white/60">No payment links yet.</p>
+          <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+            No payment links yet. Generate one above.
+          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px] text-left text-sm">
-              <thead className="border-b border-black/10 text-black/60 dark:border-white/15 dark:text-white/60">
-                <tr>
-                  <th className="py-2 pr-4">Description</th>
-                  <th className="py-2 pr-4">Amount</th>
-                  <th className="py-2 pr-4">Status</th>
-                  <th className="py-2 pr-4">Link</th>
-                  <th className="py-2">Created</th>
-                </tr>
-              </thead>
-              <tbody>
-                {links.map((link) => (
-                  <tr key={link.id} className="border-b border-black/5 dark:border-white/10">
-                    <td className="py-2 pr-4">{link.description}</td>
-                    <td className="py-2 pr-4">
-                      ₹{(link.amountInPaise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                    </td>
-                    <td className="py-2 pr-4">
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[link.status]}`}>
-                        {link.status}
-                      </span>
-                    </td>
-                    <td className="py-2 pr-4">
-                      <button onClick={() => copy(link)} className="underline">
-                        {copiedId === link.id ? "Copied!" : "Copy link"}
-                      </button>
-                    </td>
-                    <td className="py-2 text-black/60 dark:text-white/60">
-                      {new Date(link.createdAt).toLocaleString()}
-                    </td>
+          <div className="glass overflow-hidden rounded-2xl">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px] text-left text-sm">
+                <thead className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3">Description</th>
+                    <th className="px-4 py-3">Amount</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Link</th>
+                    <th className="px-4 py-3">Created</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {links.map((link) => (
+                    <tr key={link.id} className="transition-colors hover:bg-muted/50">
+                      <td className="px-4 py-3">{link.description}</td>
+                      <td className="px-4 py-3 font-medium">
+                        ₹{(link.amountInPaise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[link.status]}`}>
+                          {link.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => copy(link)}
+                          className="cursor-pointer font-medium text-primary hover:text-primary-hover"
+                        >
+                          {copiedId === link.id ? "Copied!" : "Copy link"}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{new Date(link.createdAt).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
