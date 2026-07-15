@@ -4,6 +4,8 @@ Next.js storefront + admin portal with a Razorpay payment gateway integration:
 checkout (Orders API + Checkout.js), payment links, and an admin-configurable
 key_id/key_secret with enable/disable control.
 
+Want to put this on a different website? See [docs/EMBEDDING.md](docs/EMBEDDING.md).
+
 ## Stack
 
 - Next.js 14 (App Router, TypeScript, Tailwind)
