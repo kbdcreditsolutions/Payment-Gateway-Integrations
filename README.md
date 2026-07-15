@@ -80,8 +80,13 @@ in `/admin/settings`.
 
 ## Test credentials
 
-Use Razorpay's test card `4111 1111 1111 1111`, any future expiry date, any
-CVV, to complete a test checkout. Test-mode payment links behave the same way.
+Use Razorpay's domestic test card `4100 2800 0000 1007` (Visa), any future
+expiry date, any CVV, to complete a test checkout. `4111 1111 1111 1111` is
+*not* one of Razorpay's own test cards — it gets flagged as an international
+card and declines unless the account has international card acceptance
+enabled (a separate Razorpay approval). Other domestic test cards: Mastercard
+`5500 6700 0000 1002`, RuPay `6527 6589 0000 1005`. Test-mode payment links
+behave the same way.
 
 ## Security notes
 

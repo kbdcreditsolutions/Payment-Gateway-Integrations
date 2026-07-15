@@ -21,7 +21,7 @@ export default async function CatalogPage() {
       <div>
         <h1 className="font-heading text-2xl font-semibold">Shop</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Test checkout powered by Razorpay. Use test card 4111 1111 1111 1111, any future expiry, any CVV.
+          Test checkout powered by Razorpay. Use test card 4100 2800 0000 1007 (Visa, domestic), any future expiry, any CVV.
         </p>
       </div>
 
