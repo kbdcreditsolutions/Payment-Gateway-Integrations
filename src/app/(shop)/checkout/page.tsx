@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
 import { useCart } from "@/lib/cart-context";
@@ -21,6 +21,12 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [scriptReady, setScriptReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.Razorpay) {
+      setScriptReady(true);
+    }
+  }, []);
 
   if (items.length === 0) {
     return (
@@ -150,10 +156,10 @@ export default function CheckoutPage() {
           </label>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !scriptReady}
             className="mt-1 cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Processing..." : "Pay now"}
+            {loading ? "Processing..." : scriptReady ? "Pay now" : "Loading payment..."}
           </button>
         </form>
       </div>
