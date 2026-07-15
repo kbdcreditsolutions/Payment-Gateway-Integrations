@@ -2,6 +2,16 @@
 
 Two ways to put this on a site you don't control the backend of.
 
+**Policy: every client uses their own Razorpay account.** Nobody else's
+payment link or checkout runs through KBD's Razorpay account — each client
+needs their own Razorpay account, activated for live payments (or in test
+mode while building), with their own key_id/key_secret entered into their
+*own* deployment's `/admin/settings`. This app is single-tenant: one
+`GatewayConfig` row per deployment, so "another client" always means either
+their own copy of this app, or their own backend implementing the pattern in
+section 2 below — never a second set of keys layered onto an existing
+deployment that's already configured for someone else.
+
 ## 1. Payment Link — zero code, works on any site
 
 Use this when you just need "pay me ₹X" on someone's existing site (WordPress,

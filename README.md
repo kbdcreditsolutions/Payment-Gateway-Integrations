@@ -5,6 +5,7 @@ checkout (Orders API + Checkout.js), payment links, and an admin-configurable
 key_id/key_secret with enable/disable control.
 
 Want to put this on a different website? See [docs/EMBEDDING.md](docs/EMBEDDING.md).
+Onboarding a new client? See [docs/CLIENT_ONBOARDING.md](docs/CLIENT_ONBOARDING.md).
 
 ## Stack
 
